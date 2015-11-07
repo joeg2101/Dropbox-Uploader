@@ -1,4 +1,4 @@
-# Dropbox Uploader.
+# Dropbox Uploader
 
 Dropbox Uploader is a **BASH** script which can be used to upload, download, delete, list files (and more!) from **Dropbox**, an online file sharing, synchronization and backup service. 
 
@@ -223,6 +223,33 @@ andrea@Dropbox:/$ ls
  [F] 105843  notes.txt
 andrea@DropBox:/ServerBackup$ get notes.txt
 ```
+
+## Cron Job How To
+Following a simple script that can be used to schedule automatic backup to DropBox on your server or workstation.
+
+The script:
+
+    #!/bin/bash
+
+    TMP_DIR="/tmp/"
+    DATE=$(date +"%d-%m-%Y_%H%M")
+    BKP_FILE="$TMP_DIR/MyBkp_$DATE.tar"
+    BKP_DIRS="/home/user /var/www /etc"
+    DROPBOX_UPLOADER=/path/to/dropbox_uploader.sh
+
+    tar cf "$BKP_FILE" $BKP_DIRS
+    gzip "$BKP_FILE"
+
+    $DROPBOX_UPLOADER -f /root/.dropbox_uploader upload "$BKP_FILE.gz" /
+
+    rm -fr "$BKP_FILE.gz"
+Then add this line to your crontab:
+
+    00 00 * * *     /path/to/backup.sh 2>&1 >> /var/log/backup.log
+
+The script will be executed every night at midnight, and the logs will be stored in /var/log/backup.log.
+
+
 
 ## Donations
 
